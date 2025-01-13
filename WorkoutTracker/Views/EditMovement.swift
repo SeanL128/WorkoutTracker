@@ -6,13 +6,37 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct EditMovement: View {
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+    @State private var name: String
+    var movement: Movement
+
+    init(movement: Movement) {
+        self.movement = movement
+        _name = State(initialValue: movement.name) // Prefill with current name
+    }
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            TextField("Name", text: $name)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+
+            Button("Save Changes") {
+                movement.name = name
+                try? context.save() // Save updates to the model
+                dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .navigationTitle("Edit Movement")
+        .padding()
     }
 }
 
 #Preview {
-    EditMovement()
+    EditMovement(movement: Movement())
 }

@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct WorkoutTrackerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
+                .modelContainer(for: [Workout.self, Exercise.self, Movement.self])
         }
     }
 }

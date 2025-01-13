@@ -8,8 +8,25 @@
 import SwiftUI
 
 struct AddMovement: View {
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+    @State private var name: String = ""
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            TextField("Name", text: $name)
+                .textFieldStyle(.roundedBorder)
+            
+            Button("Save Movement") {
+                let newMovement = Movement(name: name)
+                context.insert(newMovement)
+                try? context.save()
+                dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+
+        }
+        .padding()
     }
 }
 
