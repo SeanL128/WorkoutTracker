@@ -10,29 +10,45 @@ import SwiftData
 
 @Model
 class Exercise {
-    var movement: Movement
-    var exerciseSets: [ExerciseSet]   // Reps, Weight
+    var name: String
+    var equipment: [String]
+    var notes: String
+    var restTime: TimeInterval
+    var muscleGroups: [MuscleGroup]
     
-    init(movement: Movement = Movement(), sets: [ExerciseSet] = []) {
-        self.movement = movement
-        self.exerciseSets = sets
+    init(name: String = "", equipment: [String] = [], notes: String = "", restTime: TimeInterval = 0, muscleGroups: [MuscleGroup] = []) {
+        self.name = name
+        self.equipment = equipment
+        self.notes = notes
+        self.restTime = restTime
+        self.muscleGroups = Array(muscleGroups.prefix(3))
+    }
+    
+    func addMuscleGroup(_ group: MuscleGroup) -> Bool {
+        guard muscleGroups.count < 3 else {
+            print("Cannot add more than 3 muscle groups.")
+            return false
+        }
+        
+        muscleGroups.append(group)
+        return true
+    }
+    
+    func removeMuscleGroup(_ group: MuscleGroup) {
+        muscleGroups.removeAll { $0 == group }
     }
 }
 
-struct ExerciseSet: Codable {
-    var reps: Int {
-        didSet {
-            if reps < 0 { reps = 0 }
-        }
-    }
-    var weight: Double {
-        didSet {
-            if weight < 0 { weight = 0 }
-        }
-    }
-    
-    init(reps: Int = 0, weight: Double = 0) {
-        self.reps = max(0, reps)
-        self.weight = max(0, weight)
-    }
+enum MuscleGroup: String, CaseIterable, Codable {
+    case chest
+    case back
+    case biceps
+    case triceps
+    case shoulders
+    case quads
+    case hamstrings
+    case glutes
+    case core
+    case cardio
+    case other
 }

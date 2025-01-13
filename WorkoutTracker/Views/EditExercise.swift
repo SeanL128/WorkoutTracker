@@ -12,11 +12,11 @@ struct EditMovement: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var name: String
-    var movement: Movement
+    var exercise: Exercise
 
-    init(movement: Movement) {
-        self.movement = movement
-        _name = State(initialValue: movement.name) // Prefill with current name
+    init(exercise: Exercise) {
+        self.exercise = exercise
+        _name = State(initialValue: exercise.name) // Prefill with current name
     }
 
     var body: some View {
@@ -26,7 +26,7 @@ struct EditMovement: View {
                 .padding()
 
             Button("Save Changes") {
-                movement.name = name
+                exercise.name = name
                 try? context.save() // Save updates to the model
                 dismiss()
             }
@@ -38,5 +38,5 @@ struct EditMovement: View {
 }
 
 #Preview {
-    EditMovement(movement: Movement())
+    EditMovement(exercise: Exercise())
 }

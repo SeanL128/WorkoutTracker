@@ -13,25 +13,24 @@ struct MainView: View {
     
     @Query var workouts: [Workout]
     @Query var exercises: [Exercise]
-    @Query var movements: [Movement]
     
-    @State var delete: (Bool, Movement) = (false, Movement())
+    @State var delete: (Bool, Exercise) = (false, Exercise())
     
     var body: some View {
         NavigationView {
             VStack {
                 List {
-                    ForEach(movements) { movement in
+                    ForEach(exercises) { exercise in
                         HStack {
-                            Text(movement.name)
+                            Text(exercise.name)
                             Spacer()
-                            NavigationLink(destination: EditMovement(movement: movement)) {
+                            NavigationLink(destination: EditMovement(exercise: exercise)) {
                             }
                         }
                         .swipeActions {
                             Button("Delete") {
                                 delete.0 = true
-                                delete.1 = movement
+                                delete.1 = exercise
                             }
                             .tint(.red)
                         }
@@ -44,7 +43,7 @@ struct MainView: View {
                     }
                 }
                 
-                NavigationLink("Add Movement", destination: AddMovement())
+                NavigationLink("Add Movement", destination: AddExercise())
             }
             .navigationTitle("Workout Tracker")
         }

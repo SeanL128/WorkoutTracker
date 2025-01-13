@@ -13,7 +13,7 @@ struct WorkoutTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             MainView()
-                .modelContainer(for: [Workout.self, Exercise.self, Movement.self])
+                .modelContainer(for: [Workout.self, Exercise.self])
         }
     }
 }
