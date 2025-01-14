@@ -30,7 +30,6 @@ struct EditExercise: View {
         self.exercise = exercise
         _name = State(initialValue: exercise.name)
         _notes = State(initialValue: exercise.notes)
-        muscleGroupViewModel.selectedMuscleGroups = exercise.muscleGroups
         
         // Convert restTime TimeInterval to minutes and seconds
         let restTotalSeconds = Double(exercise.restTime)
@@ -120,17 +119,22 @@ struct EditExercise: View {
             }
             .padding()
             .navigationTitle(Text("Edit Exercise"))
+            .onAppear {
+                // Ensure muscle groups are loaded
+                muscleGroupViewModel.selectedMuscleGroups = exercise.muscleGroups
+            }
         }
     }
     
     private func saveExercise() {
         let restTotalSeconds = (Double(restMinutes) * 60) + Double(restSeconds)
         let restTimeInterval = TimeInterval(restTotalSeconds)
-        let newExercise = Exercise(name: name,
-                                   notes: notes,
-                                   restTime: restTimeInterval,
-                                   muscleGroups: muscleGroupViewModel.selectedMuscleGroups)
-        context.insert(newExercise)
+        
+        exercise.name = name
+        exercise.notes = notes
+        exercise.restTime = restTimeInterval
+        exercise.muscleGroups = muscleGroupViewModel.selectedMuscleGroups
+        
         try? context.save()
         dismiss()
     }
