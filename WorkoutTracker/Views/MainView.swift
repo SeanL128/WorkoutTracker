@@ -24,7 +24,7 @@ struct MainView: View {
                         HStack {
                             Text(exercise.name)
                             Spacer()
-                            NavigationLink(destination: EditMovement(exercise: exercise)) {
+                            NavigationLink(destination: EditExercise(exercise: exercise)) {
                             }
                         }
                         .swipeActions {

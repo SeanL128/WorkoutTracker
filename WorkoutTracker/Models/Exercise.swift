@@ -11,14 +11,12 @@ import SwiftData
 @Model
 class Exercise {
     var name: String
-    var equipment: [String]
     var notes: String
     var restTime: TimeInterval
     var muscleGroups: [MuscleGroup]
     
-    init(name: String = "", equipment: [String] = [], notes: String = "", restTime: TimeInterval = 0, muscleGroups: [MuscleGroup] = []) {
+    init(name: String = "", notes: String = "", restTime: TimeInterval = 0, muscleGroups: [MuscleGroup] = []) {
         self.name = name
-        self.equipment = equipment
         self.notes = notes
         self.restTime = restTime
         self.muscleGroups = Array(muscleGroups.prefix(3))
@@ -39,16 +37,13 @@ class Exercise {
     }
 }
 
-enum MuscleGroup: String, CaseIterable, Codable {
-    case chest
-    case back
-    case biceps
-    case triceps
-    case shoulders
-    case quads
-    case hamstrings
-    case glutes
-    case core
-    case cardio
-    case other
+enum MuscleGroup: String, CaseIterable, Codable, Identifiable {
+    case chest, back, biceps, triceps, shoulders, quads, hamstrings, glutes, core, cardio, other
+    
+    var id: String { self.rawValue }
+    
+    static let displayOrder: [MuscleGroup] = [
+        .other, .cardio, .core, .glutes, .hamstrings, .quads,
+        .shoulders, .triceps, .biceps, .back, .chest
+    ]
 }
