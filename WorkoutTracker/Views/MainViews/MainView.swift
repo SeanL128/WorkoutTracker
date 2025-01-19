@@ -43,6 +43,11 @@ struct MainView: View {
                     .tabItem {
                         Label("Exercises", systemImage: "dumbbell.fill")
                     }
+                
+                Stats()
+                    .tabItem {
+                        Label("Stats", systemImage: "chart.xyaxis.line")
+                    }
             }
             .onAppear {
                 ensureDailyWorkoutLogs(context: context, workouts: workouts)

@@ -16,6 +16,7 @@ struct PerformExercise: View {
     
     @State private var exercise: WorkoutExercise
     @State private var log: ExerciseLog
+    @Binding private var timeRemaining: Double
     
     @State private var showTempoSheet: Bool = false
     @State private var finish: Bool = false
@@ -24,10 +25,11 @@ struct PerformExercise: View {
     @State private var showEditSet: Bool = false
     @State private var exerciseStatus: Int = 1
     
-    init(workout: Workout, log: WorkoutLog, index: Int) {
+    init(workout: Workout, log: WorkoutLog, index: Int, time: Binding<Double> = .constant(0)) {
         self.workout = workout
         self.workoutLog = log
         self.index = index
+        self._timeRemaining = time
         
         self.exercise = workout.exercises[index]
         self.log = log.exerciseLogs[index]
@@ -45,6 +47,7 @@ struct PerformExercise: View {
                             if log.setLogs[index].completed {
                                 return .blue
                             }
+                            
                             if log.setLogs[index].skipped {
                                 return .gray
                             }
@@ -127,9 +130,23 @@ struct PerformExercise: View {
                 
                 log.setLogs[index].unskip()
                 log.setLogs[index].finish(weight: weight)
+                
+                switch (set.type) {
+                case ("Warm Up"):
+                    timeRemaining = 30
+                case ("Cool Down"):
+                    timeRemaining = 60
+                default:
+                    timeRemaining = exercise.restTime
+                }
             } else if exerciseStatus == 3 {
                 log.setLogs[index].unfinish()
                 log.setLogs[index].skip()
+            } else if exerciseStatus == 4 {
+                log.setLogs[index].unskip()
+                log.setLogs[index].unfinish()
+                
+                timeRemaining = 0
             }
             
             editingIndex.id = -1
@@ -158,7 +175,7 @@ struct PerformExercise: View {
 }
 
 #Preview {
-    var workout = Workout(exercises: [WorkoutExercise(exercise: Exercise(), sets: [ExerciseSet(), ExerciseSet(), ExerciseSet()])])
-    var workoutLog = WorkoutLog(workout: workout)
+    let workout = Workout(exercises: [WorkoutExercise(exercise: Exercise(), sets: [ExerciseSet(), ExerciseSet(), ExerciseSet()])])
+    let workoutLog = WorkoutLog(workout: workout)
     PerformExercise(workout: workout, log: workoutLog, index: 0)
 }

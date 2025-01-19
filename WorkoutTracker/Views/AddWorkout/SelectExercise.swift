@@ -17,8 +17,20 @@ struct SelectExercise: View {
     @Binding var selectedExercise: Exercise?
     @Binding var selectingExercise: Bool
     
+    @State private var searchText: String = ""
+    
+    var filteredExercises: [Exercise] {
+            if searchText.isEmpty {
+                return exercises
+            } else {
+                return exercises.filter { exercise in
+                    exercise.name.lowercased().contains(searchText.lowercased())
+                }
+            }
+        }
+    
     var groupedExercises: [MuscleGroup: [Exercise]] {
-        Dictionary(grouping: exercises, by: { exercise in
+        Dictionary(grouping: filteredExercises, by: { exercise in
             exercise.muscleGroup ?? MuscleGroup.other
         })
         .mapValues { exercises in
@@ -54,10 +66,21 @@ struct SelectExercise: View {
             }
             .listStyle(.sidebar)
             .toolbar {
-                NavigationLink(destination: AddExercise()) {
-                    Image(systemName: "plus")
+                ToolbarItem (placement: .topBarLeading) {
+                    Button {
+                        selectingExercise = false
+                    } label: {
+                        Image(systemName: "chevron.left")
+                    }
+                }
+                
+                ToolbarItem (placement: .topBarTrailing) {
+                    NavigationLink(destination: AddExercise()) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
+            .searchable(text: $searchText, prompt: "Search exercises")
             .navigationTitle(Text("Select Exercise"))
         }
     }

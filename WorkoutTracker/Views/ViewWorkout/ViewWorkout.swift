@@ -12,6 +12,9 @@ struct ViewWorkout: View {
     
     @StateObject private var viewModel: WorkoutViewModel
     
+    @State private var restTime: Double = 0
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     @State private var finishWorkout: Bool = false
     
     var log: WorkoutLog
@@ -75,16 +78,32 @@ struct ViewWorkout: View {
                 
                 TabView {
                     ForEach(viewModel.exercises.indices, id: \.self) { index in
-                        PerformExercise(workout: viewModel.workout, log: log, index: index)
+                        PerformExercise(workout: viewModel.workout, log: log, index: index, time: $restTime)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+                
+                Text("Rest Time: \(timeIntervalToString(time: restTime))")
             }
             .navigationBarHidden(true)
+            .onReceive(timer) { time in
+                if restTime > 0 {
+                    restTime -= 1
+                }
+            }
         }
     }
+    
+    private func timeIntervalToString(time: Double) -> String {
+        let interval = Int(time)
+        let seconds = interval % 60
+        let minutes = (interval / 60) % 60
+        
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
 }
+
 #Preview {
     @Previewable @State var showViewWorkout: Bool = false
     

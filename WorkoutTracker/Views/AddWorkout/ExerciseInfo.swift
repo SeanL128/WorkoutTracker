@@ -20,6 +20,7 @@ struct ExerciseInfo: View {
     @State private var restSeconds: Int = 0
     @State private var specNotes: String = ""
     @State private var sets: [ExerciseSet] = [ExerciseSet()]
+    @State private var tempoArr: [String] = ["X", "X", "X", "X"]
     
     @State private var selectingExercise: Bool = false
     @State private var editingSet: (Bool, Int) = (false, -1)
@@ -40,10 +41,13 @@ struct ExerciseInfo: View {
         restSeconds = Int(restTotalSeconds - Double(restMinutes * 60))
         
         specNotes = self.workoutExercise.specNotes
+        
         sets = self.workoutExercise.sets
         if sets.isEmpty {
             addSet()
         }
+        
+        tempoArr = self.workoutExercise.tempo.map{ String($0) }
     }
 
     var body: some View {
@@ -148,17 +152,51 @@ struct ExerciseInfo: View {
                     .clipped()
                 }
                 .padding()
+                .frame(height: 175)
+                
+                // Tempo
+                HStack (spacing: 5) {
+                    Text("Tempo")
+                    
+                    Picker("Tempo 1", selection: $tempoArr[0]) {
+                        tempoPicker()
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: 50)
+                    .clipped()
+                    
+                    Picker("Tempo 2", selection: $tempoArr[1]) {
+                        tempoPicker()
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: 50)
+                    .clipped()
+                    
+                    Picker("Tempo 3", selection: $tempoArr[2]) {
+                        tempoPicker()
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: 50)
+                    .clipped()
+                    
+                    Picker("Tempo 4", selection: $tempoArr[3]) {
+                        tempoPicker()
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: 50)
+                    .clipped()
+                }
+                
+                Button("Save") {
+                    save()
+                }
+                .buttonStyle(.borderedProminent)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Error"),
+                          message: Text("Please select an exercise"))
+                }
             }
             .padding()
-            
-            Button("Save") {
-                save()
-            }
-            .buttonStyle(.borderedProminent)
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"),
-                      message: Text("Please select an exercise"))
-            }
         }
     }
     
@@ -186,9 +224,12 @@ struct ExerciseInfo: View {
         // Workout-specific notes
         workoutExercise.specNotes = specNotes
         
+        // Tempo
+        workoutExercise.tempo = tempoArr.joined()
+        
         // Save
         if !workout.exercises.contains(workoutExercise) {
-            context.insert(workoutExercise)
+            workout.exercises.append(workoutExercise)
         }
         try? context.save()
         dismiss()
@@ -226,10 +267,17 @@ struct ExerciseInfo: View {
         }
         .frame(height: 37)
     }
+    
+    private func tempoPicker() -> some View {
+        ForEach(["X", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], id: \.self) { num in
+            Text(num)
+                .tag(num)
+        }
+    }
 }
 
 #Preview {
     ExerciseInfo(workout: Workout(),
                  exercise: Exercise(),
-                 workoutExercise: Binding(get: {return WorkoutExercise()}, set: { _ in }))
+                 workoutExercise: .constant(WorkoutExercise()))
 }

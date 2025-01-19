@@ -124,6 +124,13 @@ struct EditSet: View {
             .toolbar {
                 if exerciseStatus >= 1 {
                     Button {
+                        exerciseStatus = 4
+                        isPresented = false
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    
+                    Button {
                         exerciseStatus = 3
                         isPresented = false
                     } label: {
@@ -145,5 +152,5 @@ struct EditSet: View {
 }
 
 #Preview {
-    EditSet(set: Binding(get: { return ExerciseSet() }, set: { _ in }))
+    EditSet(set: .constant(ExerciseSet()))
 }

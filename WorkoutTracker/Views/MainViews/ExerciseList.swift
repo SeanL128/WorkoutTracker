@@ -1,0 +1,96 @@
+//
+//  ExerciseList.swift
+//  WorkoutTracker
+//
+//  Created by Sean Lindsay on 1/18/25.
+//
+
+import SwiftUI
+import SwiftData
+
+struct ExerciseList: View {
+    @Environment(\.modelContext) var context
+    
+    @Query var exercises: [Exercise]
+    
+    @State var delete: (Bool, Exercise) = (false, Exercise())
+    
+    @State private var searchText: String = ""
+    
+    var filteredExercises: [Exercise] {
+            if searchText.isEmpty {
+                return exercises
+            } else {
+                return exercises.filter { exercise in
+                    exercise.name.lowercased().contains(searchText.lowercased())
+                }
+            }
+        }
+    
+    var groupedExercises: [MuscleGroup: [Exercise]] {
+        Dictionary(grouping: filteredExercises, by: { exercise in
+            exercise.muscleGroup ?? MuscleGroup.other
+        })
+        .mapValues { exercises in
+            exercises.sorted { $0.name.lowercased() < $1.name.lowercased() } // Sorting exercises alphabetically by name
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            VStack {
+                HStack {
+                    Text("Exercises")
+                        .font(.largeTitle)
+                        .bold()
+                    
+                    Spacer()
+                    
+                    NavigationLink(destination: AddExercise()) {
+                        Image(systemName: "plus")
+                    }
+                }
+                .padding()
+                
+                List {
+                    ForEach(MuscleGroup.allCases, id: \.self) { muscleGroup in
+                        if let exercisesForGroup = groupedExercises[muscleGroup], !exercisesForGroup.isEmpty {
+                            Section(header: Text(muscleGroup.rawValue.capitalized)) {
+                                ForEach(exercisesForGroup) { exercise in
+                                    HStack {
+                                        Text(exercise.name)
+                                        
+                                        NavigationLink(destination: EditExercise(exercise: exercise)) {
+                                        }
+                                    }
+                                    .swipeActions {
+                                        Button("Delete") {
+                                            delete.0 = true
+                                            delete.1 = exercise
+                                        }
+                                        .tint(.red)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                .searchable(text: $searchText, prompt: "Search exercises")
+                .confirmationDialog("Are you sure?", isPresented: $delete.0) {
+                    Button("Delete \(delete.1.name)?", role: .destructive) {
+                        context.delete(delete.1)
+                        try? context.save()
+
+                        delete.0 = false
+                        delete.1 = Exercise()
+                    }
+                }
+            }
+            .navigationBarHidden(true)
+        }
+    }
+}
+
+#Preview {
+    ExerciseList()
+}
