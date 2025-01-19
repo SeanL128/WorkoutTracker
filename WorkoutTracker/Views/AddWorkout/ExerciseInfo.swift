@@ -1,0 +1,235 @@
+//
+//  ExerciseInfo.swift
+//  WorkoutTracker
+//
+//  Created by Sean Lindsay on 1/14/25.
+//
+
+import SwiftUI
+
+struct ExerciseInfo: View {
+    @Environment(\.modelContext) var context
+    @Environment(\.dismiss) private var dismiss
+    
+    private var workout: Workout = Workout()
+    
+    @Binding var workoutExercise: WorkoutExercise
+    @State private var exercise: Exercise? = nil
+    
+    @State private var restMinutes: Int = 3
+    @State private var restSeconds: Int = 0
+    @State private var specNotes: String = ""
+    @State private var sets: [ExerciseSet] = [ExerciseSet()]
+    
+    @State private var selectingExercise: Bool = false
+    @State private var editingSet: (Bool, Int) = (false, -1)
+    @State private var showAlert: Bool = false
+    
+    init(workout: Workout = Workout(), exercise: Exercise?, workoutExercise: Binding<WorkoutExercise>) {
+        self.workout = workout
+        self.exercise = exercise
+        self._workoutExercise = workoutExercise
+        
+        finishInit()
+    }
+    
+    private func finishInit() {
+        // Convert restTime TimeInterval to minutes and seconds
+        let restTotalSeconds = Double(self.workoutExercise.restTime)
+        restMinutes = Int(restTotalSeconds / 60)
+        restSeconds = Int(restTotalSeconds - Double(restMinutes * 60))
+        
+        specNotes = self.workoutExercise.specNotes
+        sets = self.workoutExercise.sets
+        if sets.isEmpty {
+            addSet()
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            VStack {
+                // Exercise Display
+                List {
+                    HStack {
+                        Button {
+                            selectingExercise = true
+                        } label: {
+                            Text(exercise?.name ?? "Select Exercise")
+                        }
+                        .foregroundStyle(.white)
+                    }
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+                }
+                .frame(height: 100)
+                .sheet(isPresented: $selectingExercise) {
+                    SelectExercise(selectedExercise: $exercise, selectingExercise: $selectingExercise)
+                }
+                
+                // Exercise Notes
+                if workoutExercise.exercise != nil && workoutExercise.exercise?.notes != "" {
+                    HStack {
+                        Text(workoutExercise.exercise!.notes)
+                        Spacer()
+                    }
+                }
+                
+                // Workout-specific notes
+                TextField("Workout-Specific Notes", text: $specNotes, axis: .vertical)
+                    .textFieldStyle(.roundedBorder)
+                
+                
+                Spacer()
+                
+                
+                // Sets
+                List {
+                    ForEach(sets.indices, id: \.self) { index in
+                        Button {
+                            editingSet = (true, index)
+                        } label: {
+                            setView(for: sets[index])
+                        }
+                        .foregroundStyle(.white)
+                        .swipeActions {
+                            Button("Delete") {
+                                sets.remove(at: index)
+                            }
+                            .tint(.red)
+                        }
+                    }
+                    .onDelete(perform: deleteSet)
+                }
+                .sheet(isPresented: $editingSet.0) {
+                    EditSet(set: $sets[editingSet.1])
+                        .presentationDetents([.fraction(0.35), .medium])
+                        .presentationDragIndicator(.visible)
+                }
+
+                Button {
+                    addSet()
+                } label: {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("Add Set")
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                
+                
+                Spacer()
+                
+                
+                // Rest Time Picker
+                HStack(spacing: 20) {
+                    Text("Rest Time")
+                    
+                    // Minutes Picker
+                    Picker("Minutes", selection: $restMinutes) {
+                        ForEach(Array(0...59), id: \.self) { minute in
+                            Text("\(minute) min")
+                                .tag(minute)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: 100)
+                    .clipped()
+                    
+                    // Seconds Picker
+                    Picker("Seconds", selection: $restSeconds) {
+                        ForEach([0, 15, 30, 45], id: \.self) { second in
+                            Text("\(second) sec")
+                                .tag(second)
+                        }
+                    }
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(maxWidth: 100)
+                    .clipped()
+                }
+                .padding()
+            }
+            .padding()
+            
+            Button("Save") {
+                save()
+            }
+            .buttonStyle(.borderedProminent)
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"),
+                      message: Text("Please select an exercise"))
+            }
+        }
+    }
+    
+    
+    
+    private func save() {
+        guard !sets.isEmpty && exercise != nil else {
+            showAlert = true
+            return
+        }
+        
+        // Exercise
+        workoutExercise.exercise = exercise
+        
+        // Sets
+        for set in sets {
+            set.reps = max(0, set.reps)
+        }
+        workoutExercise.sets = sets
+        
+        // Rest
+        let restTotalSeconds = (Double(restMinutes) * 60) + Double(restSeconds)
+        workoutExercise.restTime = TimeInterval(restTotalSeconds)
+        
+        // Workout-specific notes
+        workoutExercise.specNotes = specNotes
+        
+        // Save
+        if !workout.exercises.contains(workoutExercise) {
+            context.insert(workoutExercise)
+        }
+        try? context.save()
+        dismiss()
+    }
+    
+    private func deleteSet(at offsets: IndexSet) {
+        sets.remove(atOffsets: offsets)
+    }
+
+    private func addSet() {
+        sets.append(ExerciseSet())
+    }
+    
+    private func setView(for set: ExerciseSet) -> some View {
+        HStack {
+            ZStack {
+                switch (set.type) {
+                case ("Warm Up"):
+                    Image(systemName: "bolt.fill")
+                case ("Drop Set"):
+                    Image(systemName: "arrowtriangle.down.fill")
+                case ("Cool Down"):
+                    Image(systemName: "drop.fill")
+                default:
+                    Text("")
+                }
+            }
+            .frame(width: 20, height: 40)
+            
+            Text("\(set.reps) \(set.measurement) \(String(format: "%0.2f", set.weight)) lbs")
+            
+            Spacer()
+            
+            Text("\(set.rir) RIR")
+        }
+        .frame(height: 37)
+    }
+}
+
+#Preview {
+    ExerciseInfo(workout: Workout(),
+                 exercise: Exercise(),
+                 workoutExercise: Binding(get: {return WorkoutExercise()}, set: { _ in }))
+}
