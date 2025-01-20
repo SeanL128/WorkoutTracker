@@ -12,7 +12,7 @@ struct AddWorkout: View {
     @Environment(\.modelContext) var context
     @Environment(\.dismiss) private var dismiss
     
-    @StateObject private var viewModel: WorkoutViewModel = WorkoutViewModel(workout: Workout(name: ""))
+    @StateObject private var viewModel: WorkoutViewModel = WorkoutViewModel(workout: Workout(name: "", notes: ""))
     
     @State private var titleAlert: Bool = false
     @State private var exercisesAlert: Bool = false
@@ -39,6 +39,7 @@ struct AddWorkout: View {
                         }
                     }
                 }
+                .backgroundStyle(.clear)
                 
                 Button {
                     viewModel.addExercise()
@@ -96,7 +97,7 @@ struct AddWorkout: View {
 }
 
 #Preview {
-    EditWorkout(workout: Workout())
+    AddWorkout()
 }
 
 /*

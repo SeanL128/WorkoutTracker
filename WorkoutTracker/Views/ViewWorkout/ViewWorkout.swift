@@ -13,7 +13,6 @@ struct ViewWorkout: View {
     @StateObject private var viewModel: WorkoutViewModel
     
     @State private var restTime: Double = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State private var finishWorkout: Bool = false
     
@@ -84,15 +83,26 @@ struct ViewWorkout: View {
                 .tabViewStyle(.page(indexDisplayMode: .always))
                 .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                 
-                Text("Rest Time: \(timeIntervalToString(time: restTime))")
+                Text("Rest Time: \(timeIntervalToString(time: getRemainingTime()))")
             }
             .navigationBarHidden(true)
-            .onReceive(timer) { time in
-                if restTime > 0 {
-                    restTime -= 1
-                }
+            .onChange(of: restTime) {
+                startRestTime(duration: restTime)
             }
         }
+    }
+    
+    private func startRestTime(duration: Double) {
+        let endTime = Date().addingTimeInterval(duration)
+        UserDefaults.standard.set(endTime, forKey: "restEndTime")
+    }
+    
+    private func getRemainingTime() -> Double {
+        guard let endTime = UserDefaults.standard.object(forKey: "restEndTime") as? Date else {
+            return 0
+        }
+        
+        return max(0, endTime.timeIntervalSinceNow)
     }
     
     private func timeIntervalToString(time: Double) -> String {

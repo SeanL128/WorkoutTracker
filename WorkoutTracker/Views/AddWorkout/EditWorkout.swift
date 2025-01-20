@@ -43,6 +43,7 @@ struct EditWorkout: View {
                         }
                     }
                 }
+                .backgroundStyle(.clear)
                 
                 
                 TextField("Notes", text: $viewModel.notes, axis: .vertical)

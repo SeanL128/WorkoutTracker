@@ -61,7 +61,9 @@ struct PerformExercise: View {
                         } label: {
                             setView(for: exercise.sets[index])
                         }
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(UIColor { traitCollection in
+                            traitCollection.userInterfaceStyle == .dark ? .white : .black
+                        }))
                         .swipeActions {
                             Button("Skip") {
                                 log.setLogs[index].unfinish()
@@ -73,6 +75,7 @@ struct PerformExercise: View {
                         .listRowBackground(backgroundColor)
                     }
                 }
+                .backgroundStyle(.clear)
                 .sheet(isPresented: $showEditSet, onDismiss: dismissed(index: $editingIndex.id)) {
                     EditSet(set: $exercise.sets[editingIndex.id], exerciseStatus: $exerciseStatus, isPresented: $showEditSet)
                         .presentationDetents([.fraction(0.35), .medium])
@@ -125,11 +128,13 @@ struct PerformExercise: View {
     private func dismissed(index: Int) -> () -> Void {
         {
             if exerciseStatus == 2 {
+                workoutLog.started = true
+                
                 let set = exercise.sets[index]
                 let weight = set.measurement == "x" ? Double(set.reps) * set.weight : 0
                 
                 log.setLogs[index].unskip()
-                log.setLogs[index].finish(weight: weight)
+                log.setLogs[index].finish(weight: weight, reps: set.reps)
                 
                 switch (set.type) {
                 case ("Warm Up"):
@@ -140,9 +145,13 @@ struct PerformExercise: View {
                     timeRemaining = exercise.restTime
                 }
             } else if exerciseStatus == 3 {
+                workoutLog.started = true
+                
                 log.setLogs[index].unfinish()
                 log.setLogs[index].skip()
             } else if exerciseStatus == 4 {
+                workoutLog.started = true
+                
                 log.setLogs[index].unskip()
                 log.setLogs[index].unfinish()
                 

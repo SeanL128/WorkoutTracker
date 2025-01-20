@@ -31,23 +31,18 @@ struct ExerciseInfo: View {
         self.exercise = exercise
         self._workoutExercise = workoutExercise
         
-        finishInit()
-    }
-    
-    private func finishInit() {
-        // Convert restTime TimeInterval to minutes and seconds
         let restTotalSeconds = Double(self.workoutExercise.restTime)
-        restMinutes = Int(restTotalSeconds / 60)
-        restSeconds = Int(restTotalSeconds - Double(restMinutes * 60))
+        self.restMinutes = Int(restTotalSeconds / 60)
+        self.restSeconds = Int(restTotalSeconds - Double(restMinutes * 60))
         
-        specNotes = self.workoutExercise.specNotes
+        self.specNotes = self.workoutExercise.specNotes
         
-        sets = self.workoutExercise.sets
-        if sets.isEmpty {
+        self.sets = self.workoutExercise.sets
+        if self.sets.isEmpty {
             addSet()
         }
         
-        tempoArr = self.workoutExercise.tempo.map{ String($0) }
+        self.tempoArr = self.workoutExercise.tempo.map{ String($0) }
     }
 
     var body: some View {
@@ -61,11 +56,14 @@ struct ExerciseInfo: View {
                         } label: {
                             Text(exercise?.name ?? "Select Exercise")
                         }
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(UIColor { traitCollection in
+                            traitCollection.userInterfaceStyle == .dark ? .white : .black
+                        }))
                     }
                     .lineLimit(2)
                     .truncationMode(.tail)
                 }
+                .backgroundStyle(.clear)
                 .frame(height: 100)
                 .sheet(isPresented: $selectingExercise) {
                     SelectExercise(selectedExercise: $exercise, selectingExercise: $selectingExercise)
@@ -95,7 +93,9 @@ struct ExerciseInfo: View {
                         } label: {
                             setView(for: sets[index])
                         }
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color(UIColor { traitCollection in
+                            traitCollection.userInterfaceStyle == .dark ? .white : .black
+                        }))
                         .swipeActions {
                             Button("Delete") {
                                 sets.remove(at: index)
@@ -105,6 +105,7 @@ struct ExerciseInfo: View {
                     }
                     .onDelete(perform: deleteSet)
                 }
+                .backgroundStyle(.clear)
                 .sheet(isPresented: $editingSet.0) {
                     EditSet(set: $sets[editingSet.1])
                         .presentationDetents([.fraction(0.35), .medium])
@@ -152,7 +153,7 @@ struct ExerciseInfo: View {
                     .clipped()
                 }
                 .padding()
-                .frame(height: 175)
+                .frame(height: 125)
                 
                 // Tempo
                 HStack (spacing: 5) {
@@ -269,7 +270,7 @@ struct ExerciseInfo: View {
     }
     
     private func tempoPicker() -> some View {
-        ForEach(["X", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], id: \.self) { num in
+        ForEach(["X", "1", "2", "3", "4", "5", "6", "7", "8", "9"], id: \.self) { num in
             Text(num)
                 .tag(num)
         }

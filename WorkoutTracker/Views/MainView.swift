@@ -64,6 +64,15 @@ struct MainView: View {
             UserDefaults.standard.set(today, forKey: "lastCheckedDate")
 
             let workoutLogs: [WorkoutLog] = try! context.fetch(FetchDescriptor<WorkoutLog>())
+            
+            for log in workoutLogs {
+                if !log.started {
+                    context.delete(log)
+                }
+            }
+            
+            try? context.save()
+            
             let existingLogs = workoutLogs.filter { log in
                 Calendar.current.isDate(Date(timeIntervalSince1970: log.start), inSameDayAs: today)
             }

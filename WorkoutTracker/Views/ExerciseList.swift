@@ -75,6 +75,7 @@ struct ExerciseList: View {
                         }
                     }
                 }
+                .backgroundStyle(.clear)
                 .searchable(text: $searchText, prompt: "Search exercises")
                 .confirmationDialog("Are you sure?", isPresented: $delete.0) {
                     Button("Delete \(delete.1.name)?", role: .destructive) {

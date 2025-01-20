@@ -51,7 +51,9 @@ struct WorkoutList: View {
                                         
                                         Image(systemName: "chevron.right")
                                     }
-                                    .foregroundStyle(.white)
+                                    .foregroundStyle(Color(UIColor { traitCollection in
+                                        traitCollection.userInterfaceStyle == .dark ? .white : .black
+                                    }))
                                 }
                             } else {
                                 HStack {
@@ -70,6 +72,7 @@ struct WorkoutList: View {
                         }
                     }
                 }
+                .backgroundStyle(.clear)
                 .confirmationDialog("Are you sure?", isPresented: $delete.0) {
                     Button("Delete \(delete.1.name)?", role: .destructive) {
                         context.delete(delete.1)

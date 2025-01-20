@@ -9,11 +9,11 @@ import SwiftUI
 
 struct TempoSheet: View {
     private var arr: [String]
-    @State private var slot: Int = 0
-    @State private var text: String = ""
+    private var xPresent: Bool
     
     init (tempo: String = "XXXX") {
         arr = tempo.map { String($0) }
+        xPresent = arr[0] == "X" || arr[1] == "X" || arr[2] == "X" || arr[3] == "X"
     }
     
     var body: some View {
@@ -28,10 +28,12 @@ struct TempoSheet: View {
                 Text("\(arr[3]): Shortened Pause (Fully Shortened)")
                     .padding(1)
                 
-                Text("0/X = Instant")
-                    .padding(1)
-                    .italic(true)
-                    .font(.subheadline)
+                if xPresent {
+                    Text("X = Instant")
+                        .padding(1)
+                        .italic(true)
+                        .font(.subheadline)
+                }
                 
                 Spacer()
             }

@@ -13,6 +13,7 @@ class WorkoutLog: Identifiable {
     @Attribute(.unique) var id: UUID = UUID()
     
     var workout: Workout
+    var started: Bool
     var completed: Bool
     var start: Double
     var end: Double
@@ -20,6 +21,7 @@ class WorkoutLog: Identifiable {
     
     init(workout: Workout) {
         self.workout = workout
+        started = false
         completed = false
         start = Date().timeIntervalSince1970.rounded()
         end = 0
@@ -48,5 +50,29 @@ class WorkoutLog: Identifiable {
                 }
             }
         }
+    }
+    
+    func getTotalReps() -> Int {
+        var reps: Int = 0
+        
+        for exerciseLog in exerciseLogs {
+            for setLog in exerciseLog.setLogs {
+                reps += setLog.reps
+            }
+        }
+        
+        return reps
+    }
+    
+    func getTotalWeight() -> Double {
+        var weight: Double = 0
+        
+        for exerciseLog in exerciseLogs {
+            for setLog in exerciseLog.setLogs {
+                weight += setLog.weight
+            }
+        }
+        
+        return weight
     }
 }

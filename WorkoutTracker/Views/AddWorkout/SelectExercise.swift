@@ -58,12 +58,15 @@ struct SelectExercise: View {
                                         }
                                     }
                                 }
-                                .foregroundStyle(Color.white)
+                                .foregroundStyle(Color(UIColor { traitCollection in
+                                    traitCollection.userInterfaceStyle == .dark ? .white : .black
+                                }))
                             }
                         }
                     }
                 }
             }
+            .backgroundStyle(.clear)
             .listStyle(.sidebar)
             .toolbar {
                 ToolbarItem (placement: .topBarLeading) {
