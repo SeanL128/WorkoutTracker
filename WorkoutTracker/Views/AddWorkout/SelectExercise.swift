@@ -50,17 +50,24 @@ struct SelectExercise: View {
                                     selectingExercise = false
                                 } label: {
                                     HStack {
-                                        Text(exercise.name)
+                                        VStack {
+                                            Text(exercise.name)
+                                            
+                                            Text(exercise.notes)
+                                                .font(.subheadline)
+                                                .lineLimit(1)
+                                                .truncationMode(.tail)
+                                        }
+                                        
                                         Spacer()
+                                        
                                         if selectedExercise == exercise {
                                             Image(systemName: "checkmark")
                                                 .foregroundColor(.blue)
                                         }
                                     }
                                 }
-                                .foregroundStyle(Color(UIColor { traitCollection in
-                                    traitCollection.userInterfaceStyle == .dark ? .white : .black
-                                }))
+                                .foregroundStyle(textColor)
                             }
                         }
                     }

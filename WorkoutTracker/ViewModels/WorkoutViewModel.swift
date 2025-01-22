@@ -21,7 +21,7 @@ class WorkoutViewModel: ObservableObject {
         self.notes = workout.notes
     }
     
-    func addExercise(_ exercise: WorkoutExercise = WorkoutExercise()) {
+    func addExercise(exercise: WorkoutExercise = WorkoutExercise()) {
         exercises.append(exercise)
     }
     

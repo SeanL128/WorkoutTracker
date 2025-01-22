@@ -27,7 +27,7 @@ struct AddWorkout: View {
                     ForEach(viewModel.exercises.indices, id: \.self) { index in
                         let exercise = viewModel.exercises[index]
                         HStack {
-                            Text(viewModel.exercises[index].exercise?.name ?? "Select Exercise")
+                            Text(exercise.exercise?.name ?? "Select Exercise")
                             NavigationLink(destination: ExerciseInfo(workout: viewModel.workout, exercise: exercise.exercise ?? nil, workoutExercise: $viewModel.exercises[index])) {
                             }
                         }
@@ -37,6 +37,9 @@ struct AddWorkout: View {
                             }
                             .tint(.red)
                         }
+                    }
+                    .onMove { from, to in
+                        viewModel.exercises.move(fromOffsets: from, toOffset: to)
                     }
                 }
                 .backgroundStyle(.clear)
@@ -61,7 +64,24 @@ struct AddWorkout: View {
                         return
                     }
                     
+//                    guard viewModel.exercises.count > 0 else {
+//                        exercisesAlert = true
+//                        return
+//                    }
+                    
+                    var blankCount = 0
+                    for exercise in viewModel.exercises {
+                        if exercise.exercise == nil {
+                            viewModel.exercises.remove(at: viewModel.exercises.firstIndex(of: exercise)!)
+                            blankCount += 1
+                        }
+                    }
+                    
                     guard viewModel.exercises.count > 0 else {
+                        for _ in 0..<blankCount {
+                            viewModel.addExercise()
+                        }
+                        
                         exercisesAlert = true
                         return
                     }

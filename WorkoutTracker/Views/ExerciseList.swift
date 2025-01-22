@@ -58,7 +58,14 @@ struct ExerciseList: View {
                             Section(header: Text(muscleGroup.rawValue.capitalized)) {
                                 ForEach(exercisesForGroup) { exercise in
                                     HStack {
-                                        Text(exercise.name)
+                                        VStack {
+                                            Text(exercise.name)
+                                            
+                                            Text(exercise.notes)
+                                                .font(.subheadline)
+                                                .lineLimit(1)
+                                                .truncationMode(.tail)
+                                        }
                                         
                                         NavigationLink(destination: EditExercise(exercise: exercise)) {
                                         }

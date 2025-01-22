@@ -19,15 +19,19 @@ class WorkoutLog: Identifiable, Codable {
     var end: Double
     var exerciseLogs: [ExerciseLog] = []
     
-    init(workout: Workout) {
+    init(workout: Workout, started: Bool = false, completed: Bool = false, start: Double = Date().timeIntervalSince1970.rounded(), end: Double = 0, exerciseLogs: [ExerciseLog]? = nil) {
         self.workout = workout
-        started = false
-        completed = false
-        start = Date().timeIntervalSince1970.rounded()
-        end = 0
+        self.started = started
+        self.completed = completed
+        self.start = start
+        self.end = end
         
-        for exercise in workout.exercises {
-            exerciseLogs.append(ExerciseLog(exercise: exercise))
+        if exerciseLogs != nil {
+            self.exerciseLogs = exerciseLogs!
+        } else {
+            for exercise in workout.exercises {
+                self.exerciseLogs.append(ExerciseLog(exercise: exercise))
+            }
         }
     }
     

@@ -56,9 +56,7 @@ struct ExerciseInfo: View {
                         } label: {
                             Text(exercise?.name ?? "Select Exercise")
                         }
-                        .foregroundStyle(Color(UIColor { traitCollection in
-                            traitCollection.userInterfaceStyle == .dark ? .white : .black
-                        }))
+                        .foregroundStyle(textColor)
                     }
                     .lineLimit(2)
                     .truncationMode(.tail)
@@ -93,9 +91,7 @@ struct ExerciseInfo: View {
                         } label: {
                             setView(for: sets[index])
                         }
-                        .foregroundStyle(Color(UIColor { traitCollection in
-                            traitCollection.userInterfaceStyle == .dark ? .white : .black
-                        }))
+                        .foregroundStyle(textColor)
                         .swipeActions {
                             Button("Delete") {
                                 sets.remove(at: index)

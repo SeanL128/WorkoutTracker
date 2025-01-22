@@ -6,6 +6,13 @@
 //
 
 import Foundation
+import SwiftUI
+
+var textColor: Color {
+    Color(UIColor { traitCollection in
+        return traitCollection.userInterfaceStyle == .dark ? .white : .black
+    })
+}
 
 func lengthToString(length: Double) -> String {
     let hours = Int(length) / 3600

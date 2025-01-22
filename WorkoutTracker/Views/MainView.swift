@@ -12,8 +12,6 @@ struct MainView: View {
     @Environment(\.modelContext) var context
     
     @Query var workouts: [Workout]
-    @Query var workoutLogs: [WorkoutLog]
-    @Query var exercises: [Exercise]
     
     @State var deleteExercise: (Bool, Exercise) = (false, Exercise())
     @State var deleteWorkout: (Bool, Workout) = (false, Workout())

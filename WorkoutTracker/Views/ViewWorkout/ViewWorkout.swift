@@ -11,6 +11,7 @@ struct ViewWorkout: View {
     @Environment(\.modelContext) private var context
     
     @StateObject private var viewModel: WorkoutViewModel
+    @StateObject private var statsViewModel: StatsViewModel = StatsViewModel()
     
     @State private var restTime: Double = 0
     
@@ -23,6 +24,9 @@ struct ViewWorkout: View {
         _viewModel = StateObject(wrappedValue: WorkoutViewModel(workout: workout))
         log = workoutLog
         self.onBack = onBack
+        
+        statsViewModel.updateWorkoutLogs(workoutLogs: [log])
+        statsViewModel.selectWorkout(workout: workout)
     }
     
     var body: some View {
@@ -75,15 +79,19 @@ struct ViewWorkout: View {
                 }
                 .padding()
                 
-                TabView {
-                    ForEach(viewModel.exercises.indices, id: \.self) { index in
-                        PerformExercise(workout: viewModel.workout, log: log, index: index, time: $restTime)
+                if log.completed {
+                    statsViewModel.stats
+                } else {
+                    TabView {
+                        ForEach(viewModel.exercises.indices, id: \.self) { index in
+                            PerformExercise(workout: viewModel.workout, log: log, index: index, time: $restTime)
+                        }
                     }
+                    .tabViewStyle(.page(indexDisplayMode: .always))
+                    .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+                    
+                    Text("Rest Time: \(timeIntervalToString(time: getRemainingTime()))")
                 }
-                .tabViewStyle(.page(indexDisplayMode: .always))
-                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-                
-                Text("Rest Time: \(timeIntervalToString(time: getRemainingTime()))")
             }
             .navigationBarHidden(true)
             .onChange(of: restTime) {

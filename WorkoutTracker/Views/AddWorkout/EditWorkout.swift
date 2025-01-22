@@ -31,7 +31,7 @@ struct EditWorkout: View {
                     ForEach(viewModel.exercises.indices, id: \.self) { index in
                         let exercise = viewModel.exercises[index]
                         HStack {
-                            Text(viewModel.exercises[index].exercise?.name ?? "Select Exercise")
+                            Text(exercise.exercise?.name ?? "Select Exercise")
                             NavigationLink(destination: ExerciseInfo(workout: viewModel.workout, exercise: exercise.exercise ?? nil, workoutExercise: $viewModel.exercises[index])) {
                             }
                         }

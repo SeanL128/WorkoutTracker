@@ -61,9 +61,7 @@ struct PerformExercise: View {
                         } label: {
                             setView(for: exercise.sets[index])
                         }
-                        .foregroundStyle(Color(UIColor { traitCollection in
-                            traitCollection.userInterfaceStyle == .dark ? .white : .black
-                        }))
+                        .foregroundStyle(textColor)
                         .swipeActions {
                             Button("Skip") {
                                 log.setLogs[index].unfinish()

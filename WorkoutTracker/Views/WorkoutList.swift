@@ -51,9 +51,7 @@ struct WorkoutList: View {
                                         
                                         Image(systemName: "chevron.right")
                                     }
-                                    .foregroundStyle(Color(UIColor { traitCollection in
-                                        traitCollection.userInterfaceStyle == .dark ? .white : .black
-                                    }))
+                                    .foregroundStyle(textColor)
                                 }
                             } else {
                                 HStack {
