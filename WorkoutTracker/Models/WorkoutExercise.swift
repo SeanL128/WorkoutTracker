@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class WorkoutExercise: Identifiable {
+class WorkoutExercise: Identifiable, Codable {
     @Attribute(.unique) var id = UUID()
     
     var exercise: Exercise?
@@ -24,5 +24,29 @@ class WorkoutExercise: Identifiable {
         self.restTime = restTime
         self.specNotes = specNotes
         self.tempo = tempo
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id, exercise, sets, restTime, specNotes, tempo
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        exercise = try container.decode(Exercise.self, forKey: .exercise)
+        sets = try container.decode([ExerciseSet].self, forKey: .sets)
+        restTime = try container.decode(TimeInterval.self, forKey: .restTime)
+        specNotes = try container.decode(String.self, forKey: .specNotes)
+        tempo = try container.decode(String.self, forKey: .tempo)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(exercise, forKey: .exercise)
+        try container.encode(sets, forKey: .sets)
+        try container.encode(restTime, forKey: .restTime)
+        try container.encode(specNotes, forKey: .specNotes)
+        try container.encode(tempo, forKey: .tempo)
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class WorkoutLog: Identifiable {
+class WorkoutLog: Identifiable, Codable {
     @Attribute(.unique) var id: UUID = UUID()
     
     var workout: Workout
@@ -31,14 +31,6 @@ class WorkoutLog: Identifiable {
         }
     }
     
-    func lengthToString() -> String {
-        let length = end - start
-        let hours = Int(length) / 3600
-        let minutes = (Int(length) % 3600) / 60
-        let seconds = Int(length) % 60
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
-    }
-    
     func finishWorkout() {
         for exerciseLog in exerciseLogs {
             if !exerciseLog.completed {
@@ -51,14 +43,13 @@ class WorkoutLog: Identifiable {
             }
         }
     }
+
     
     func getTotalReps() -> Int {
         var reps: Int = 0
         
         for exerciseLog in exerciseLogs {
-            for setLog in exerciseLog.setLogs {
-                reps += setLog.reps
-            }
+            reps += exerciseLog.getTotalReps()
         }
         
         return reps
@@ -68,11 +59,39 @@ class WorkoutLog: Identifiable {
         var weight: Double = 0
         
         for exerciseLog in exerciseLogs {
-            for setLog in exerciseLog.setLogs {
-                weight += setLog.weight
-            }
+            weight += exerciseLog.getTotalWeight()
         }
         
         return weight
+    }
+    
+    func getLength() -> Double {
+        return end - start
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case id, workout, started, completed, start, end, exerciseLogs
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        workout = try container.decode(Workout.self, forKey: .workout)
+        started = try container.decode(Bool.self, forKey: .started)
+        completed = try container.decode(Bool.self, forKey: .completed)
+        start = try container.decode(Double.self, forKey: .start)
+        end = try container.decode(Double.self, forKey: .end)
+        exerciseLogs = try container.decode([ExerciseLog].self, forKey: .exerciseLogs)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(workout, forKey: .workout)
+        try container.encode(started, forKey: .started)
+        try container.encode(completed, forKey: .completed)
+        try container.encode(start, forKey: .start)
+        try container.encode(end, forKey: .end)
+        try container.encode(exerciseLogs, forKey: .exerciseLogs)
     }
 }

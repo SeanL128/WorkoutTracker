@@ -48,6 +48,11 @@ struct MainView: View {
                     .tabItem {
                         Label("Stats", systemImage: "chart.xyaxis.line")
                     }
+                
+                Options()
+                    .tabItem {
+                        Label("Options", systemImage: "gearshape.fill")
+                    }
             }
             .onAppear {
                 ensureDailyWorkoutLogs(context: context, workouts: workouts)
