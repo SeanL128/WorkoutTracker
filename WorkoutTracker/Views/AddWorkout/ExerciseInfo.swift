@@ -24,6 +24,7 @@ struct ExerciseInfo: View {
     
     @State private var selectingExercise: Bool = false
     @State private var editingSet: (Bool, Int) = (false, -1)
+    @State private var showTempoSheet: Bool = false
     @State private var showAlert: Bool = false
     
     init(workout: Workout, exercise: Exercise?, workoutExercise: Binding<WorkoutExercise>) {
@@ -115,7 +116,6 @@ struct ExerciseInfo: View {
                 .sheet(isPresented: $editingSet.0) {
                     EditSet(set: $sets[editingSet.1])
                         .presentationDetents([.fraction(0.35), .medium])
-                        .presentationDragIndicator(.visible)
                 }
 
                 Button {
@@ -164,7 +164,11 @@ struct ExerciseInfo: View {
                 
                 // Tempo
                 HStack (spacing: 5) {
-                    Text("Tempo")
+                    Button {
+                        showTempoSheet = true
+                    } label: {
+                        Text("Tempo")
+                    }
                     
                     Picker("Tempo 1", selection: $tempoArr[0]) {
                         tempoPicker()
@@ -196,6 +200,10 @@ struct ExerciseInfo: View {
                 }
                 .frame(height: 100)
                 .padding(.bottom)
+                .sheet(isPresented: $showTempoSheet) {
+                    TempoSheet(tempo: tempoArr.joined(separator: ""))
+                        .presentationDetents([.fraction(0.2), .medium])
+                }
                 
                 Button("Save") {
                     save()

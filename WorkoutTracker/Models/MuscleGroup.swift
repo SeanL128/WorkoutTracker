@@ -9,12 +9,12 @@ import Foundation
 import SwiftUI
 
 enum MuscleGroup: String, CaseIterable, Codable, Identifiable {
-    case chest, back, biceps, triceps, shoulders, quads, hamstrings, glutes, core, cardio, other, overall
+    case chest, back, biceps, triceps, shoulders, quads, hamstrings, glutes, calves, core, cardio, other, overall
     
     var id: String { self.rawValue }
     
     static let displayOrder: [MuscleGroup] = [
-        .other, .cardio, .core, .glutes, .hamstrings, .quads,
+        .other, .cardio, .core, .calves, .glutes, .hamstrings, .quads,
         .shoulders, .triceps, .biceps, .back, .chest
     ]
     
@@ -27,9 +27,10 @@ enum MuscleGroup: String, CaseIterable, Codable, Identifiable {
         .quads: .orange,
         .hamstrings: .teal,
         .glutes: .pink,
+        .calves: .brown,
         .core: .cyan,
         .cardio: .white,
-        .other: .gray,
+        .other: .gray
     ]
     
     static let colorKeyValuePairs: KeyValuePairs = [
@@ -41,8 +42,9 @@ enum MuscleGroup: String, CaseIterable, Codable, Identifiable {
         "Quads": Color.orange,
         "Hamstrings": Color.teal,
         "Glutes": Color.pink,
+        "Calves": Color.brown,
         "Core": Color.cyan,
         "Cardio": Color.white,
-        "Other": Color.gray,
+        "Other": Color.gray
     ]
 }

@@ -16,7 +16,7 @@ class Exercise: Identifiable, Codable {
     var notes: String
     var muscleGroup: MuscleGroup?
     
-    init(name: String = "Name", notes: String = "Notes", muscleGroup: MuscleGroup = MuscleGroup.other) {
+    init(name: String = "", notes: String = "", muscleGroup: MuscleGroup = MuscleGroup.other) {
         self.name = name
         self.notes = notes
         self.muscleGroup = muscleGroup

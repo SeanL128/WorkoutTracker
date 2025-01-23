@@ -89,7 +89,6 @@ struct PerformExercise: View {
                 .sheet(isPresented: $showTempoSheet) {
                     TempoSheet(tempo: exercise.tempo)
                         .presentationDetents([.fraction(0.2), .medium])
-                        .presentationDragIndicator(.visible)
                 }
             }
             .navigationBarHidden(true)
