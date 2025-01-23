@@ -64,11 +64,6 @@ struct AddWorkout: View {
                         return
                     }
                     
-//                    guard viewModel.exercises.count > 0 else {
-//                        exercisesAlert = true
-//                        return
-//                    }
-                    
                     var blankCount = 0
                     for exercise in viewModel.exercises {
                         if exercise.exercise == nil {
@@ -91,6 +86,7 @@ struct AddWorkout: View {
                     
                     context.insert(viewModel.workout)
                     context.insert(WorkoutLog(workout: viewModel.workout))
+
                     try? context.save()
                     
                     dismiss()

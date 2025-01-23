@@ -53,13 +53,13 @@ struct MainView: View {
                     }
             }
             .onAppear {
-                ensureDailyWorkoutLogs(context: context, workouts: workouts)
+                initWorkoutLogs()
             }
             .transition(.move(edge: .leading))
         }
     }
     
-    func ensureDailyWorkoutLogs(context: ModelContext, workouts: [Workout]) {
+    func initWorkoutLogs() {
         let today = Calendar.current.startOfDay(for: Date())
         let lastChecked = UserDefaults.standard.object(forKey: "lastCheckedDate") as? Date
 

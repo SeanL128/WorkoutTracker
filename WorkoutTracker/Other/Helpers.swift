@@ -7,6 +7,9 @@
 
 import Foundation
 import SwiftUI
+import SwiftData
+
+@Query var workouts: [Workout]
 
 var textColor: Color {
     Color(UIColor { traitCollection in

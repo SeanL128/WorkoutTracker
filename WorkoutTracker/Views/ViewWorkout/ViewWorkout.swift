@@ -24,9 +24,6 @@ struct ViewWorkout: View {
         _viewModel = StateObject(wrappedValue: WorkoutViewModel(workout: workout))
         log = workoutLog
         self.onBack = onBack
-        
-        statsViewModel.updateWorkoutLogs(workoutLogs: [log])
-        statsViewModel.selectWorkout(workout: workout)
     }
     
     var body: some View {
@@ -94,6 +91,10 @@ struct ViewWorkout: View {
                 }
             }
             .navigationBarHidden(true)
+            .onAppear() {
+                statsViewModel.updateWorkoutLogs(workoutLogs: [log])
+                statsViewModel.selectWorkout(workout: viewModel.workout)
+            }
             .onChange(of: restTime) {
                 startRestTime(duration: restTime)
             }

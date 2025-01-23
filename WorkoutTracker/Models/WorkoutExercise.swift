@@ -18,7 +18,7 @@ class WorkoutExercise: Identifiable, Codable {
     var specNotes: String
     var tempo: String
     
-    init(exercise: Exercise? = nil, sets: [ExerciseSet] = [], restTime: TimeInterval = 180, specNotes: String = "Workout-specifc notes", tempo: String = "XXXX") {
+    init(exercise: Exercise? = nil, sets: [ExerciseSet] = [], restTime: TimeInterval = 180, specNotes: String = "", tempo: String = "XXXX") {
         self.exercise = exercise
         self.sets = sets
         self.restTime = restTime

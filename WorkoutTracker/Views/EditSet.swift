@@ -12,13 +12,19 @@ struct EditSet: View {
     @Binding var exerciseStatus: Int
     @Binding var isPresented: Bool
     
-    @State private var weight: Int = 40
-    @State private var weightDecimal: Int = 0
+    @State private var weight: Int
+    @State private var weightDecimal: Int
     
     init (set: Binding<ExerciseSet>, exerciseStatus: Binding<Int> = .constant(0), isPresented: Binding<Bool> = .constant(false)) {
         self._set = set
         self._exerciseStatus = exerciseStatus
         self._isPresented = isPresented
+        
+        let initialWeight = Int(set.wrappedValue.weight.rounded(.down))
+        let initialWeightDecimal = Int(set.wrappedValue.weight.truncatingRemainder(dividingBy: 1) * 100)
+        
+        _weight = State(initialValue: initialWeight)
+        _weightDecimal = State(initialValue: initialWeightDecimal)
         
         finishInit()
     }

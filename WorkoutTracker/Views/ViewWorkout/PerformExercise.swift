@@ -45,7 +45,7 @@ struct PerformExercise: View {
                     ForEach(exercise.sets.indices, id: \.self) { index in
                         var backgroundColor: Color {
                             if log.setLogs[index].completed {
-                                return .blue
+                                return .accent
                             }
                             
                             if log.setLogs[index].skipped {
@@ -77,7 +77,6 @@ struct PerformExercise: View {
                 .sheet(isPresented: $showEditSet, onDismiss: dismissed(index: $editingIndex.id)) {
                     EditSet(set: $exercise.sets[editingIndex.id], exerciseStatus: $exerciseStatus, isPresented: $showEditSet)
                         .presentationDetents([.fraction(0.35), .medium])
-                        .presentationDragIndicator(.visible)
                 }
                 
                 HStack {

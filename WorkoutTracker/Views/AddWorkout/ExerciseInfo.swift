@@ -16,33 +16,41 @@ struct ExerciseInfo: View {
     @Binding var workoutExercise: WorkoutExercise
     @State private var exercise: Exercise? = nil
     
-    @State private var restMinutes: Int = 3
-    @State private var restSeconds: Int = 0
-    @State private var specNotes: String = ""
-    @State private var sets: [ExerciseSet] = [ExerciseSet()]
-    @State private var tempoArr: [String] = ["X", "X", "X", "X"]
+    @State private var restMinutes: Int
+    @State private var restSeconds: Int
+    @State private var specNotes: String
+    @State private var sets: [ExerciseSet]
+    @State private var tempoArr: [String]
     
     @State private var selectingExercise: Bool = false
     @State private var editingSet: (Bool, Int) = (false, -1)
     @State private var showAlert: Bool = false
     
-    init(workout: Workout = Workout(), exercise: Exercise?, workoutExercise: Binding<WorkoutExercise>) {
+    init(workout: Workout, exercise: Exercise?, workoutExercise: Binding<WorkoutExercise>) {
         self.workout = workout
         self.exercise = exercise
         self._workoutExercise = workoutExercise
         
-        let restTotalSeconds = Double(self.workoutExercise.restTime)
-        self.restMinutes = Int(restTotalSeconds / 60)
-        self.restSeconds = Int(restTotalSeconds - Double(restMinutes * 60))
+        let restTotalSeconds = Double(workoutExercise.restTime.wrappedValue)
+        let initialRestMinutes = Int(restTotalSeconds / 60)
+        let initialRestSeconds = Int(restTotalSeconds - Double(initialRestMinutes * 60))
+        let initialSpecNotes = workoutExercise.specNotes.wrappedValue
+        let initialSets = workoutExercise.sets.wrappedValue
+        let initialTempoArr = workoutExercise.tempo.wrappedValue.map { String($0) }
         
-        self.specNotes = self.workoutExercise.specNotes
+        _restMinutes = State(initialValue: initialRestMinutes)
+        _restSeconds = State(initialValue: initialRestSeconds)
+        _specNotes = State(initialValue: initialSpecNotes)
+        _sets = State(initialValue: initialSets.isEmpty ? [ExerciseSet()] : initialSets)
+        _tempoArr = State(initialValue: initialTempoArr)
         
-        self.sets = self.workoutExercise.sets
-        if self.sets.isEmpty {
+        if sets.isEmpty {
             addSet()
         }
+    }
+    
+    private func finishInit() {
         
-        self.tempoArr = self.workoutExercise.tempo.map{ String($0) }
     }
 
     var body: some View {
@@ -78,6 +86,8 @@ struct ExerciseInfo: View {
                 // Workout-specific notes
                 TextField("Workout-Specific Notes", text: $specNotes, axis: .vertical)
                     .textFieldStyle(.roundedBorder)
+                    .padding(.top, -10)
+                    .padding(.horizontal)
                 
                 
                 Spacer()
@@ -148,7 +158,8 @@ struct ExerciseInfo: View {
                     .frame(maxWidth: 100)
                     .clipped()
                 }
-                .padding()
+                .padding(.top)
+                .padding(.horizontal)
                 .frame(height: 125)
                 
                 // Tempo
@@ -183,6 +194,8 @@ struct ExerciseInfo: View {
                     .frame(maxWidth: 50)
                     .clipped()
                 }
+                .frame(height: 100)
+                .padding(.bottom)
                 
                 Button("Save") {
                     save()

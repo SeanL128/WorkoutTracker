@@ -53,10 +53,14 @@ struct SelectExercise: View {
                                         VStack {
                                             Text(exercise.name)
                                             
-                                            Text(exercise.notes)
-                                                .font(.subheadline)
-                                                .lineLimit(1)
-                                                .truncationMode(.tail)
+                                            if exercise.notes != "" {
+                                                Text(exercise.notes)
+                                                    .font(.subheadline)
+                                                    .italic()
+                                                    .lineLimit(1)
+                                                    .truncationMode(.tail)
+                                                    .opacity(0.8)
+                                            }
                                         }
                                         
                                         Spacer()

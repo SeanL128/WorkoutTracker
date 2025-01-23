@@ -73,6 +73,8 @@ struct EditWorkout: View {
                     viewModel.workout.name = viewModel.workoutName
                     viewModel.workout.exercises = viewModel.exercises
                     
+                    context.insert(WorkoutLog(workout: viewModel.workout))
+
                     try? context.save()
                     
                     dismiss()
@@ -101,8 +103,3 @@ struct EditWorkout: View {
 #Preview {
     EditWorkout(workout: Workout())
 }
-
-/*
- clicking an exercise brings up it's info, a rest time picker, and a button to save it in that slot
-    this page can also be accessed through a tab on the main screen for easy exercise creation
- */
